@@ -447,6 +447,8 @@
 		<execute function="Check" locator1="PortalSettingsAuthentication#AUTHENTICATION_LDAP_${enableCheckboxKey}_CHECKBOX" />
 
 		<execute macro="PortletEntry#save" />
+
+		<execute macro="Alert#viewSuccessMessage" />
 	</command>
 
 	<command name="enableOpenIDCP">
