@@ -23,6 +23,9 @@
 	</tear-down>
 
 	<command name="ViewCaptchaEnabled" priority="4">
+		<property name="osgi.module.configuration.file.names" value="com.liferay.captcha.configuration.CaptchaConfiguration" />
+		<property name="osgi.module.configurations" value="maxChallenges=&quot;0&quot;" />
+
 		<execute macro="SignInNavigator#gotoCreateAccount" />
 
 		<execute macro="User#viewCaptchaPG">
@@ -31,8 +34,10 @@
 	</command>
 
 	<command name="ViewRecaptchaEnabled" priority="4">
-		<var name="recaptchaPrivateKey" property-value="recaptcha.private.key" />
-		<var name="recaptchaPublicKey" property-value="recaptcha.public.key" />
+		<property name="osgi.module.configuration.file.names" value="com.liferay.captcha.configuration.CaptchaConfiguration" />
+		<property name="osgi.module.configurations" value="maxChallenges=&quot;0&quot;
+reCaptchaPrivateKey=&quot;recaptcha.private.key&quot;
+reCaptchaPublicKey=&quot;recaptcha.public.key&quot;" />
 
 		<execute macro="User#firstLoginPG" />
 
