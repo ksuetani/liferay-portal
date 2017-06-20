@@ -888,6 +888,9 @@
 	</command>
 
 	<command name="AddUsers" priority="4">
+		<property name="custom.properties" value="minifier.enabled=false" />
+		<property name="portal.acceptance" value="min" />
+		
 		<execute macro="ProductMenu#gotoControlPanelUsers">
 			<var name="portlet" value="Users and Organizations" />
 		</execute>
