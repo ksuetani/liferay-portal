@@ -226,6 +226,9 @@
 	</command>
 
 	<command name="LocalizeDefaultPageTemplates" priority="4">
+		<property name="custom.properties" value="minifier.enabled=false" />
+		<property name="portal.acceptance" value="min" />
+		
 		<execute macro="ProductMenu#gotoControlPanelSites">
 			<var name="portlet" value="Page Templates" />
 		</execute>
