@@ -10,9 +10,21 @@
 	</set-up>
 
 	<tear-down>
-		<execute macro="PortalInstances#tearDownCP">
-			<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
-		</execute>
+		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
+
+		<if>
+			<equals arg1="${testPortalInstance}" arg2="true" />
+			<then>
+				<execute macro="PortalInstances#tearDownCP" />
+			</then>
+			<else>
+				<execute macro="WebContent#tearDownCP" />
+
+				<execute macro="WebContentTemplates#tearDownCP" />
+
+				<execute macro="WebContentStructures#tearDownCP" />
+			</else>
+		</if>
 	</tear-down>
 
 	<command name="AddFolder" priority="5">
@@ -2021,7 +2033,7 @@
 		</execute>
 	</command>
 
-	<command ignore="true" name="ImportTrainingLAR" priority="4">
+	<command ignore="true" name="ImportTrainingLAR" priority="5">
 		<property name="testray.component.names" value="Training" />
 
 		<execute macro="ProductMenu#gotoControlPanelSites">

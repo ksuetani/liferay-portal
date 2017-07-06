@@ -103,23 +103,7 @@ if (editorOptions != null) {
 			Liferay.namespace('EDITORS')['<%= editorName %>'] = true;
 
 			CKEDITOR.scriptLoader.loadScripts = function(scripts, success, failure) {
-				AUI().use(
-					'aui-base',
-					function(A) {
-						scripts = scripts.filter(
-							function(item) {
-								return !A.one('script[src=' + item + ']');
-							}
-						);
-
-						if (scripts.length) {
-							CKEDITOR.scriptLoader.load(scripts, success, failure);
-						}
-						else {
-							success();
-						}
-					}
-				);
+				CKEDITOR.scriptLoader.load(scripts, success, failure);
 			};
 
 			CKEDITOR.getNextZIndex = function() {
@@ -380,8 +364,10 @@ name = HtmlUtil.escapeJS(name);
 
 						var editorNode = A.one('#<%= name %>');
 
-						editorNode.removeAttribute('contenteditable');
-						editorNode.removeClass('lfr-editable');
+						if (editorNode) {
+							editorNode.removeAttribute('contenteditable');
+							editorNode.removeClass('lfr-editable');
+						}
 					}
 				}
 			}
@@ -416,12 +402,14 @@ name = HtmlUtil.escapeJS(name);
 	var createEditor = function() {
 		var editorNode = A.one('#<%= name %>');
 
-		editorNode.attr('contenteditable', true);
-		editorNode.addClass('lfr-editable');
+		if (editorNode) {
+			editorNode.attr('contenteditable', true);
+			editorNode.addClass('lfr-editable');
 
-		var eventHandles = [
-			A.Do.after(afterVal, editorNode, 'val', this)
-		];
+			var eventHandles = [
+				A.Do.after(afterVal, editorNode, 'val', this)
+			];
+		}
 
 		function initData() {
 			<c:if test="<%= Validator.isNotNull(initMethod) && !(inlineEdit && Validator.isNotNull(inlineEditSaveURL)) %>">
