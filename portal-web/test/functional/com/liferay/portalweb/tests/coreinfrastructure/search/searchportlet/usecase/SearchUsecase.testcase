@@ -1046,6 +1046,8 @@
 			<var name="searchAssetTitle" value="DM Document Title 1" />
 		</execute>
 
+		<execute macro="Portlet#assertLongURL" />
+
 		<execute macro="Search#viewSearchAssetDetailPage">
 			<var name="searchAssetTitle" value="DM Document Title 1" />
 		</execute>
