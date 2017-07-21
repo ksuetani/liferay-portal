@@ -720,6 +720,8 @@
 
 		<execute function="AssertClick" locator1="RolesPermissions#SAVE_BUTTON" value1="Save" />
 
+		<execute function="Confirm" value1="Changing these permissions will overwrite all permissions of that type previously configured on this entity." />
+
 		<execute macro="Alert#viewSuccessMessage" />
 	</command>
 
