@@ -35,6 +35,7 @@ public class MDRRuleGroupInstanceUpgrade extends UpgradeProcess {
 
 	@Override
 	public void doUpgrade() throws Exception {
+		populateCompanyIds();
 		populateResourcePermissions();
 	}
 
@@ -98,6 +99,41 @@ public class MDRRuleGroupInstanceUpgrade extends UpgradeProcess {
 		}
 
 		return ownerRoleIds;
+	}
+
+	public void populateCompanyIds() throws Exception {
+		StringBundler sb = new StringBundler();
+
+		sb.append("select MDRRuleGroup.companyId, ");
+		sb.append("MDRRuleGroupInstance.RuleGroupInstanceId from ");
+		sb.append("MDRRuleGroup left join MDRRuleGroupInstance on ");
+		sb.append("MDRRuleGroup.ruleGroupId = ");
+		sb.append("MDRRuleGroupInstance.ruleGroupId where ");
+		sb.append("MDRRuleGroupInstance.companyId = 0");
+
+		try (PreparedStatement ps1 =
+				AutoBatchPreparedStatementUtil.concurrentAutoBatch(
+					connection,
+					"update MDRRuleGroupInstance set companyId = ? where " +
+						"ruleGroupInstanceId = ?");
+
+			PreparedStatement ps2 = connection.prepareStatement(
+				sb.toString())) {
+
+			try (ResultSet rs = ps2.executeQuery()) {
+				while (rs.next()) {
+					long companyId = rs.getLong(1);
+					long ruleGroupInstanceId = rs.getLong(2);
+
+					ps1.setLong(1, companyId);
+					ps1.setLong(2, ruleGroupInstanceId);
+
+					ps1.addBatch();
+				}
+
+				ps1.executeBatch();
+			}
+		}
 	}
 
 	public void populateResourcePermissions() throws Exception {
