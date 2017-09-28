@@ -54,6 +54,10 @@
 			<var name="locale" value="iw-IL" />
 		</execute>
 
+		<execute macro="WebContent#addCP">
+			<var name="webContentTitle" value="WC Title" />
+		</execute>
+
 		<execute macro="WebContent#viewRTLLayout" />
 	</command>
 
