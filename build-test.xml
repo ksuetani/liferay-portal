@@ -10380,12 +10380,14 @@ module.framework.properties.blacklist.portal.profile.names=${blacklist.portal.pr
 			</not>
 			<then>
 				<if>
-					<equals arg1="${app.server.type}" arg2="jboss" />
+					<or>
+						<equals arg1="${app.server.type}" arg2="jboss" />
+						<equals arg1="${app.server.type}" arg2="wildfly" />
+					</or>
 					<then>
 						<property name="extra.lib.dirs" value="modules/system/layers/base/javax/mail,modules/system/layers/base/javax/persistence,modules/system/layers/base/javax/servlet,modules/system/layers/base/javax/transaction" />
 						<property name="global.lib.dir" value="modules/com/liferay/portal/main" />
 						<property name="portal.dir" value="standalone/deployments/ROOT.war" />
-						<property name="server.detector.server.id" value="jboss" />
 					</then>
 					<elseif>
 						<equals arg1="${app.server.type}" arg2="tomcat" />
@@ -10393,16 +10395,6 @@ module.framework.properties.blacklist.portal.profile.names=${blacklist.portal.pr
 							<property name="extra.lib.dirs" value="bin" />
 							<property name="global.lib.dir" value="lib" />
 							<property name="portal.dir" value="webapps/ROOT" />
-							<property name="server.detector.server.id" value="tomcat" />
-						</then>
-					</elseif>
-					<elseif>
-						<equals arg1="${app.server.type}" arg2="wildfly" />
-						<then>
-							<property name="extra.lib.dirs" value="modules/system/layers/base/javax/mail,modules/system/layers/base/javax/persistence,modules/system/layers/base/javax/servlet,modules/system/layers/base/javax/transaction" />
-							<property name="global.lib.dir" value="modules/com/liferay/portal/main" />
-							<property name="portal.dir" value="standalone/deployments/ROOT.war" />
-							<property name="server.detector.server.id" value="wildfly" />
 						</then>
 					</elseif>
 				</if>
@@ -10411,7 +10403,7 @@ module.framework.properties.blacklist.portal.profile.names=${blacklist.portal.pr
 extra.lib.dirs=${extra.lib.dirs}
 global.lib.dir=${global.lib.dir}
 portal.dir=${portal.dir}
-server.detector.server.id=${server.detector.server.id}</property>
+server.detector.server.id=${app.server.type}</property>
 
 				<get-testcase-property property.name="app.server.properties.exclude" />
 
