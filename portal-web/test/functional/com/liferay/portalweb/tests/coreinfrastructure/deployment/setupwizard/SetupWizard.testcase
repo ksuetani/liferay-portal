@@ -22,7 +22,8 @@
 	</command>
 
 	<command name="HypersonicToMySQL" priority="5">
-		<property name="portal.acceptance.tomcat.mysql" value="true" />
+		<property name="portal.acceptance" value="quarantine" />
+		<property name="portal.acceptance.tomcat.mysql" value="quarantine" />
 		<property name="portal.release" value="true" />
 		<property name="portal.upstream" value="true" />
 
