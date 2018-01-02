@@ -122,9 +122,12 @@
 	</command>
 
 	<command name="assertCannotDeleteOnlyPage">
-		<execute macro="LexiconEntry#delete">
-			<var name="failure" value="You must have at least one page." />
-			<var name="rowEntry" value="${pageName}" />
+		<execute function="Click#waitForMenuToggleJSClick" locator1="Icon#ROW_VERTICAL_ELLIPSIS">
+			<var name="key_rowEntry" value="${pageName}" />
+		</execute>
+
+		<execute function="AssertElementNotPresent" locator1="MenuItem#ANY_MENU_ITEM" value1="Delete">
+			<var name="key_menuItem" value="Delete" />
 		</execute>
 	</command>
 
@@ -408,18 +411,6 @@
 
 		<execute function="Click" locator1="MenuItem#ANY_MENU_ITEM" value1="Manage">
 			<var name="key_menuItem" value="Manage" />
-		</execute>
-	</command>
-
-	<command name="gotoMyAccount">
-		<description message="Navigate to My Account > ${portletName}." />
-
-		<execute macro="Navigator#openURL" />
-
-		<execute macro="ProductMenu#gotoPortlet">
-			<var name="category" value="My Account" />
-			<var name="panel" value="User" />
-			<var name="portlet" value="${portletName}" />
 		</execute>
 	</command>
 

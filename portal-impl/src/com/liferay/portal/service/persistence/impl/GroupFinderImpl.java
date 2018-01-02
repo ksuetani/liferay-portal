@@ -427,7 +427,7 @@ public class GroupFinderImpl
 
 			findByCompanyIdSQL = replaceOrderBy(findByCompanyIdSQL, obc);
 
-			StringBundler sb = new StringBundler(9);
+			StringBundler sb = new StringBundler(11);
 
 			sb.append(StringPool.OPEN_PARENTHESIS);
 			sb.append(replaceJoinAndWhere(findByCompanyIdSQL, params1));
@@ -1268,9 +1268,7 @@ public class GroupFinderImpl
 			else if (key.equals("types")) {
 				List<Integer> values = (List<Integer>)entry.getValue();
 
-				for (int i = 0; i < values.size(); i++) {
-					Integer value = values.get(i);
-
+				for (Integer value : values) {
 					qPos.add(value);
 				}
 			}
