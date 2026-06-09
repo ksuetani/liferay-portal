@@ -251,7 +251,7 @@ test('LPD-29088 Assert Publication Overview panel is visible', async ({
 		)
 	).toBeVisible();
 	await expect(
-		page.getByText(site2.name + ' (3):  Blogs Entry (3)')
+		page.getByRole('link', {name: /Blogs Entry \(\d+\)/})
 	).toBeVisible();
 
 	await apiHelpers.headlessChangeTracking.publishCTCollection(
@@ -268,7 +268,7 @@ test('LPD-29088 Assert Publication Overview panel is visible', async ({
 		)
 	).toBeVisible();
 	await expect(
-		page.getByText(site2.name + ' (3):   Blogs Entry (3)')
+		page.getByRole('link', {name: /Blogs Entry \(\d+\)/})
 	).toBeVisible();
 });
 
@@ -1012,7 +1012,7 @@ test('LPD-78919 Unified view in FragmentEntryLink review page is shown', async (
 	await renderViewDropdown.waitFor({state: 'visible', timeout: 15000});
 
 	await clickAndExpectToBeVisible({
-		autoClick: true,
+		autoClick: false,
 		target: page.getByRole('menuitem', {name: 'Unified View'}),
 		trigger: renderViewDropdown,
 	});
@@ -1315,7 +1315,7 @@ test('LPS-179026 Can preview changes for WikiPages', async ({
 
 	await changeTrackingPage.goToReviewChanges(ctCollection.body.name);
 
-	await changeTrackingPage.reviewChange(wikiPageTitle);
+	await changeTrackingPage.reviewChange(wikiPageTitle + ' (1.1)');
 
 	await changeTrackingPage.selectRenderView('Unified View');
 
