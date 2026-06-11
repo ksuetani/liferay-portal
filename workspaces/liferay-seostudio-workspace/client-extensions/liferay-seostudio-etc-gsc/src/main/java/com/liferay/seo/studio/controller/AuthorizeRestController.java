@@ -54,7 +54,7 @@ public class AuthorizeRestController extends BaseRestController {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 
-		if (!_mainDomain.equals(redirectURI.getHost()) ||
+		if (!_mainDomain.equals(redirectURI.getAuthority()) ||
 			!_protocol.equals(redirectURI.getScheme())) {
 
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

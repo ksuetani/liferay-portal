@@ -7,7 +7,6 @@ package com.liferay.seo.studio.service;
 
 import com.liferay.client.extension.util.spring.boot3.client.LiferayOAuth2AccessTokenManager;
 import com.liferay.client.extension.util.spring.boot3.service.BaseService;
-import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 
 import java.time.Instant;
@@ -40,9 +39,8 @@ public class LiferayObjectService extends BaseService {
 			_CREDENTIAL_ENTRIES_PATH
 		).queryParam(
 			"filter",
-			StringBundler.concat(
-				"r_seoStudioDomainToSEOStudioGSCCEntries_seoStudioDomainId eq ",
-				"'", seoStudioDomainId, "'")
+			"r_seoStudioDomainToSEOStudioGSCCEntries_seoStudioDomainId eq " +
+				seoStudioDomainId
 		).build();
 
 		JSONObject jsonObject = new JSONObject(
