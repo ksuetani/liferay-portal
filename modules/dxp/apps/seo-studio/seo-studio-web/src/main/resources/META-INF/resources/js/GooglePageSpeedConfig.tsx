@@ -6,9 +6,8 @@
 import ClayButton, {ClayButtonWithIcon} from '@clayui/button';
 import {ClayInput} from '@clayui/form';
 import ClayIcon from '@clayui/icon';
-import ClayLayout from '@clayui/layout';
-import ClayLink from '@clayui/link';
 import ClayToolbar from '@clayui/toolbar';
+import {fetch} from 'frontend-js-web';
 import React, {useEffect, useState} from 'react';
 
 declare const Liferay: {
@@ -86,8 +85,7 @@ export default function GooglePageSpeedConfig() {
 						'Google PageSpeed connection failed. Please verify your configuration and try again.'
 					);
 				}
-
-				});
+			});
 
 	const saveApiKey = (): Promise<void> =>
 		fetch(`${INSTANCES_API}/${instanceId}`, {
@@ -162,7 +160,7 @@ export default function GooglePageSpeedConfig() {
 
 					<ClayToolbar.Item>
 						<a
-							className="btn btn-secondary border-0"
+							className="border-0 btn btn-secondary"
 							href={BACK_URL}
 						>
 							Cancel
@@ -171,11 +169,11 @@ export default function GooglePageSpeedConfig() {
 
 					<ClayToolbar.Item>
 						<ClayButton
-						disabled={!apiKey.trim() || saving || loading}
-						onClick={handleSave}
-					>
-						{saving ? 'Validating...' : 'Save'}
-					</ClayButton>
+							disabled={!apiKey.trim() || saving || loading}
+							onClick={handleSave}
+						>
+							{saving ? 'Validating...' : 'Save'}
+						</ClayButton>
 					</ClayToolbar.Item>
 				</ClayToolbar.Nav>
 			</ClayToolbar>
@@ -186,20 +184,16 @@ export default function GooglePageSpeedConfig() {
 				</h2>
 
 				<p className="mb-4 text-secondary">
-					To connect Google PageSpeed Insights, create an API Key
-					in your Google Cloud project after enabling the PageSpeed
+					To connect Google PageSpeed Insights, create an API Key in
+					your Google Cloud project after enabling the PageSpeed
 					Insights API, then paste the API Key below to complete
-					setup. If your API Key has application restrictions
-					enabled, make sure to add the following domain to your
-					allowlist so SEO can access the PageSpeed Insights API
-					successfully.
+					setup. If your API Key has application restrictions enabled,
+					make sure to add the following domain to your allowlist so
+					SEO can access the PageSpeed Insights API successfully.
 				</p>
 
 				{validationError && (
-					<div
-						className="alert alert-warning mb-4"
-						role="alert"
-					>
+					<div className="alert alert-warning mb-4" role="alert">
 						<ClayIcon
 							className="mr-2"
 							spritemap={spritemap}

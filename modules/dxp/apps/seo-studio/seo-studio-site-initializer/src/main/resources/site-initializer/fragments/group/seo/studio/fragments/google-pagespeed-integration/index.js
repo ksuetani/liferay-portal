@@ -3,8 +3,10 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
+/* eslint-disable no-undef */
+
 (function () {
-	var container = fragmentElement.querySelector(
+	const container = fragmentElement.querySelector(
 		'.google-pagespeed-config-root'
 	);
 
@@ -12,11 +14,11 @@
 		return;
 	}
 
-	import('/o/seo-studio-web/__liferay__/index.js').then(function (module) {
-		var root = module.renderGooglePageSpeedConfig(container);
+	import('/o/seo-studio-web/__liferay__/index.js').then((module) => {
+		const root = module.renderGooglePageSpeedConfig(container);
 
 		if (Liferay && Liferay.on) {
-			Liferay.on('beforeNavigate', function () {
+			Liferay.on('beforeNavigate', () => {
 				root.unmount();
 			});
 		}

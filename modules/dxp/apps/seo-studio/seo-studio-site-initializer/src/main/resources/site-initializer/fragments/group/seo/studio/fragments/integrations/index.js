@@ -3,23 +3,27 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
+/* eslint-disable @liferay/portal/no-global-fetch, no-undef */
+
 (function () {
 	if (layoutMode === 'edit') {
 		return;
 	}
 
-	var caretSpan = fragmentElement.querySelector('#addIntegrationCaret');
+	const caretSpan = fragmentElement.querySelector('#addIntegrationCaret');
 
 	if (caretSpan) {
 		caretSpan.innerHTML =
 			'<svg class="lexicon-icon lexicon-icon-caret-bottom" viewBox="0 0 512 512">' +
-			'<use href="' + Liferay.Icons.spritemap + '#caret-bottom"></use>' +
+			'<use href="' +
+			Liferay.Icons.spritemap +
+			'#caret-bottom"></use>' +
 			'</svg>';
 	}
 
-	var emptyState = fragmentElement.querySelector('#integrationsEmpty');
-	var tableContainer = fragmentElement.querySelector('#integrationsTable');
-	var tableBody = fragmentElement.querySelector('#integrationsTableBody');
+	const emptyState = fragmentElement.querySelector('#integrationsEmpty');
+	const tableContainer = fragmentElement.querySelector('#integrationsTable');
+	const tableBody = fragmentElement.querySelector('#integrationsTableBody');
 
 	if (!emptyState || !tableContainer || !tableBody) {
 		return;
@@ -30,7 +34,7 @@
 			return '';
 		}
 
-		var date = new Date(dateString);
+		const date = new Date(dateString);
 
 		return date.toLocaleDateString('en-US', {
 			day: 'numeric',
@@ -40,7 +44,7 @@
 	}
 
 	function renderTable(integrations) {
-		if (integrations.length === 0) {
+		if (!integrations.length) {
 			emptyState.classList.remove('d-none');
 			tableContainer.classList.add('d-none');
 		}
@@ -50,8 +54,8 @@
 
 			tableBody.innerHTML = '';
 
-			integrations.forEach(function (integration) {
-				var row = document.createElement('tr');
+			integrations.forEach((integration) => {
+				const row = document.createElement('tr');
 
 				row.innerHTML =
 					'<td class="table-cell-expand">' +
@@ -71,7 +75,9 @@
 					'<div class="dropdown">' +
 					'<button aria-expanded="false" aria-haspopup="true" class="component-action dropdown-toggle integration-kebab" type="button">' +
 					'<svg class="lexicon-icon lexicon-icon-ellipsis-v" viewBox="0 0 512 512">' +
-					'<use href="' + Liferay.Icons.spritemap + '#ellipsis-v"></use>' +
+					'<use href="' +
+					Liferay.Icons.spritemap +
+					'#ellipsis-v"></use>' +
 					'</svg>' +
 					'</button>' +
 					'<div class="dropdown-menu dropdown-menu-right">' +
@@ -101,15 +107,15 @@
 			},
 		}
 	)
-		.then(function (response) {
+		.then((response) => {
 			return response.json();
 		})
-		.then(function (data) {
-			var integrations = [];
+		.then((data) => {
+			const integrations = [];
 
-			var items = data.items || [];
+			const items = data.items || [];
 
-			if (items.length > 0 && items[0].googlePageSpeedAPIKey) {
+			if (!!items.length && items[0].googlePageSpeedAPIKey) {
 				integrations.push({
 					dateAdded: formatDate(items[0].dateModified),
 					editUrl: '/web/seo-studio/configurations/google-pagespeed',
@@ -123,10 +129,10 @@
 
 			fragmentElement
 				.querySelectorAll('.integration-kebab')
-				.forEach(function (kebab) {
-					var menu = kebab.nextElementSibling;
+				.forEach((kebab) => {
+					const menu = kebab.nextElementSibling;
 
-					kebab.addEventListener('click', function (event) {
+					kebab.addEventListener('click', (event) => {
 						event.stopPropagation();
 
 						menu.classList.toggle('show');
@@ -145,7 +151,7 @@
 					},
 					method: 'PATCH',
 				})
-					.then(function (response) {
+					.then((response) => {
 						if (!response.ok) {
 							throw new Error();
 						}
@@ -159,7 +165,7 @@
 
 						renderTable([]);
 					})
-					.catch(function () {
+					.catch(() => {
 						Liferay.Util.openToast({
 							message: 'Failed to remove integration.',
 							type: 'danger',
@@ -168,11 +174,11 @@
 			}
 
 			function showRemoveModal(instanceId) {
-				var overlay = document.createElement('div');
+				const overlay = document.createElement('div');
 
 				overlay.className = 'modal-backdrop fade show';
 
-				var modal = document.createElement('div');
+				const modal = document.createElement('div');
 
 				modal.className = 'fade modal show';
 				modal.style.display = 'block';
@@ -222,7 +228,7 @@
 
 				modal
 					.querySelector('.modal-confirm')
-					.addEventListener('click', function () {
+					.addEventListener('click', () => {
 						closeModal();
 
 						removeIntegration(instanceId);
@@ -231,46 +237,45 @@
 
 			fragmentElement
 				.querySelectorAll('.integration-remove')
-				.forEach(function (removeBtn) {
-					removeBtn.addEventListener('click', function () {
-						var instanceId = removeBtn.getAttribute(
-							'data-instance-id'
-						);
+				.forEach((removeBtn) => {
+					removeBtn.addEventListener('click', () => {
+						const instanceId =
+							removeBtn.getAttribute('data-instance-id');
 
 						showRemoveModal(instanceId);
 					});
 				});
 		})
-		.catch(function () {
+		.catch(() => {
 			renderTable([]);
 		});
 
-	var dropdownToggle = fragmentElement.querySelector('.dropdown-toggle');
-	var dropdownMenu = fragmentElement.querySelector('.dropdown-menu');
+	const dropdownToggle = fragmentElement.querySelector('.dropdown-toggle');
+	const dropdownMenu = fragmentElement.querySelector('.dropdown-menu');
 
 	if (dropdownToggle && dropdownMenu) {
-		dropdownToggle.addEventListener('click', function (event) {
+		dropdownToggle.addEventListener('click', (event) => {
 			event.stopPropagation();
 
-			var isOpen = dropdownMenu.classList.contains('show');
+			const isOpen = dropdownMenu.classList.contains('show');
 
 			dropdownMenu.classList.toggle('show');
 			dropdownToggle.setAttribute('aria-expanded', !isOpen);
 		});
 
-		document.addEventListener('click', function () {
+		document.addEventListener('click', () => {
 			dropdownMenu.classList.remove('show');
 			dropdownToggle.setAttribute('aria-expanded', 'false');
 
 			fragmentElement
 				.querySelectorAll('.integration-kebab + .dropdown-menu')
-				.forEach(function (menu) {
+				.forEach((menu) => {
 					menu.classList.remove('show');
 				});
 		});
 	}
 
-	var toastMessage = sessionStorage.getItem('seoStudioToast');
+	const toastMessage = sessionStorage.getItem('seoStudioToast');
 
 	if (toastMessage) {
 		sessionStorage.removeItem('seoStudioToast');
@@ -282,15 +287,15 @@
 		});
 	}
 
-	var collapseToggle = fragmentElement.querySelector(
+	const collapseToggle = fragmentElement.querySelector(
 		'.integrations-collapse-toggle'
 	);
-	var body = fragmentElement.querySelector('#integrationsBody');
-	var header = fragmentElement.querySelector('.integrations-header');
+	const body = fragmentElement.querySelector('#integrationsBody');
+	const header = fragmentElement.querySelector('.integrations-header');
 
 	if (collapseToggle && body && header) {
-		collapseToggle.addEventListener('click', function () {
-			var isExpanded =
+		collapseToggle.addEventListener('click', () => {
+			const isExpanded =
 				collapseToggle.getAttribute('aria-expanded') === 'true';
 
 			collapseToggle.setAttribute('aria-expanded', !isExpanded);

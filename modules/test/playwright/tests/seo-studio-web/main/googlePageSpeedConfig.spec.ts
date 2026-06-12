@@ -10,11 +10,7 @@ import getRandomString from '../../../utils/getRandomString';
 import {seoStudioPagesTest} from './fixtures/seoStudioPagesTest';
 import {seoStudioSiteTest} from './fixtures/seoStudioSiteTest';
 
-const test = mergeTests(
-	loginTest(),
-	seoStudioPagesTest,
-	seoStudioSiteTest
-);
+const test = mergeTests(loginTest(), seoStudioPagesTest, seoStudioSiteTest);
 
 test(
 	'Shows validation error when saving an invalid API key',
@@ -26,13 +22,11 @@ test(
 
 		await googlePageSpeedConfigPage.saveButton.click();
 
-		await expect(
-			googlePageSpeedConfigPage.validationAlert
-		).toBeVisible();
+		await expect(googlePageSpeedConfigPage.validationAlert).toBeVisible();
 
-		await expect(
-			googlePageSpeedConfigPage.validationAlert
-		).toContainText('Google PageSpeed connection failed');
+		await expect(googlePageSpeedConfigPage.validationAlert).toContainText(
+			'Google PageSpeed connection failed'
+		);
 
 		await expect(googlePageSpeedConfigPage.page).toHaveURL(
 			/configurations\/google-pagespeed/
@@ -46,20 +40,14 @@ test(
 	async ({googlePageSpeedConfigPage, seoStudioSite}) => {
 		await googlePageSpeedConfigPage.goto(seoStudioSite.friendlyUrlPath);
 
-		await expect(
-			googlePageSpeedConfigPage.saveButton
-		).toBeDisabled();
+		await expect(googlePageSpeedConfigPage.saveButton).toBeDisabled();
 
 		await googlePageSpeedConfigPage.apiKeyInput.fill(getRandomString());
 
-		await expect(
-			googlePageSpeedConfigPage.saveButton
-		).toBeEnabled();
+		await expect(googlePageSpeedConfigPage.saveButton).toBeEnabled();
 
 		await googlePageSpeedConfigPage.apiKeyInput.clear();
 
-		await expect(
-			googlePageSpeedConfigPage.saveButton
-		).toBeDisabled();
+		await expect(googlePageSpeedConfigPage.saveButton).toBeDisabled();
 	}
 );
