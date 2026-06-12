@@ -5,13 +5,18 @@
 
 import {test} from '@playwright/test';
 
+import {GooglePageSpeedConfigPage} from '../pages/GooglePageSpeedConfigPage';
 import {OnPagePage} from '../pages/OnPagePage';
 import {SEOStudioSitePage} from '../pages/SEOStudioSitePage';
 
 const seoStudioPagesTest = test.extend<{
+	googlePageSpeedConfigPage: GooglePageSpeedConfigPage;
 	onPagePage: OnPagePage;
 	seoStudioSitePage: SEOStudioSitePage;
 }>({
+	googlePageSpeedConfigPage: async ({page}, use) => {
+		await use(new GooglePageSpeedConfigPage(page));
+	},
 	onPagePage: async ({page}, use) => {
 		await use(new OnPagePage(page));
 	},
