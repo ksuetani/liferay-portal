@@ -1,0 +1,35 @@
+/**
+ * SPDX-FileCopyrightText: (c) 2026 Liferay, Inc. https://liferay.com
+ * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
+ */
+
+import ClayLabel from '@clayui/label';
+import {Provider} from '@clayui/provider';
+import React from 'react';
+
+interface IProps {
+	itemData?: {
+		state?: {
+			key?: string;
+			name?: string;
+		};
+	};
+}
+
+export default function IntegrationStatusCellRenderer({itemData}: IProps) {
+	const state = itemData?.state;
+
+	if (!state) {
+		return null;
+	}
+
+	const displayType = state.key === 'active' ? 'success' : 'danger';
+
+	return (
+		<Provider spritemap={Liferay.Icons.spritemap}>
+			<ClayLabel displayType={displayType}>
+				{state.name?.toUpperCase()}
+			</ClayLabel>
+		</Provider>
+	);
+}
