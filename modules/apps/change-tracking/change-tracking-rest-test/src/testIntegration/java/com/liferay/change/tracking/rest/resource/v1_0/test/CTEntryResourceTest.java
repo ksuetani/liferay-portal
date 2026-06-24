@@ -156,19 +156,8 @@ public class CTEntryResourceTest extends BaseCTEntryResourceTestCase {
 
 		CTEntry ctEntry2 = _addKBArticleCTEntry(ctCollectionId2, kbArticle);
 
-		Page<CTEntry> page;
-
-		try (SafeCloseable safeCloseable =
-				CTCollectionThreadLocal.setCTCollectionIdWithSafeCloseable(
-					ctCollectionId1)) {
-
-			page = ctEntryResource.getCTEntriesHistoryPage(
-				_kbArticleClassNameId, ctEntry1.getModelClassPK(), null,
-				testGroup.getGroupId(), null, Pagination.of(1, 10), null);
-		}
-
-		assertContains(ctEntry1, (List<CTEntry>)page.getItems());
-		assertContains(ctEntry2, (List<CTEntry>)page.getItems());
+		_assertHistoryPageInPublicationContext(
+			_kbArticleClassNameId, ctCollectionId1, ctEntry1, ctEntry2);
 	}
 
 	@Test
@@ -189,21 +178,8 @@ public class CTEntryResourceTest extends BaseCTEntryResourceTestCase {
 		CTEntry ctEntry2 = _addJournalArticleCTEntry(
 			ctCollectionId2, journalArticle);
 
-		Page<CTEntry> page;
-
-		try (SafeCloseable safeCloseable =
-				CTCollectionThreadLocal.setCTCollectionIdWithSafeCloseable(
-					ctCollectionId1)) {
-
-			page = ctEntryResource.getCTEntriesHistoryPage(
-				_journalArticleClassNameId, ctEntry1.getModelClassPK(), null,
-				testGroup.getGroupId(), null, Pagination.of(1, 10), null);
-		}
-
-		assertContains(ctEntry1, (List<CTEntry>)page.getItems());
-		assertContains(ctEntry2, (List<CTEntry>)page.getItems());
-
-		Assert.assertEquals(2, page.getTotalCount());
+		_assertHistoryPageInPublicationContext(
+			_journalArticleClassNameId, ctCollectionId1, ctEntry1, ctEntry2);
 	}
 
 	@Override
@@ -708,6 +684,26 @@ public class CTEntryResourceTest extends BaseCTEntryResourceTestCase {
 		_waitForReindex();
 
 		return ctEntryResource.getCTEntry(serviceBuilderCTEntry.getCtEntryId());
+	}
+
+	private void _assertHistoryPageInPublicationContext(
+			long classNameId, long ctCollectionId, CTEntry ctEntry1,
+			CTEntry ctEntry2)
+		throws Exception {
+
+		Page<CTEntry> page;
+
+		try (SafeCloseable safeCloseable =
+				CTCollectionThreadLocal.setCTCollectionIdWithSafeCloseable(
+					ctCollectionId)) {
+
+			page = ctEntryResource.getCTEntriesHistoryPage(
+				classNameId, ctEntry1.getModelClassPK(), null,
+				testGroup.getGroupId(), null, Pagination.of(1, 10), null);
+		}
+
+		assertContains(ctEntry1, (List<CTEntry>)page.getItems());
+		assertContains(ctEntry2, (List<CTEntry>)page.getItems());
 	}
 
 	private long _getCTCollectionId() throws Exception {
