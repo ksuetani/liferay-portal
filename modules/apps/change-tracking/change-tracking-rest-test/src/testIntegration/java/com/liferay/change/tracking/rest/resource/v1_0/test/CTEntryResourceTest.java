@@ -137,6 +137,41 @@ public class CTEntryResourceTest extends BaseCTEntryResourceTestCase {
 		assertEqualsIgnoringOrder(ctEntries, (List<CTEntry>)page.getItems());
 	}
 
+	@Test
+	public void testGetCTEntriesHistoryPageInPublicationContext()
+		throws Exception {
+
+		JournalArticle journalArticle = JournalTestUtil.addArticle(
+			testGroup.getGroupId(),
+			JournalFolderConstants.DEFAULT_PARENT_FOLDER_ID);
+
+		long ctCollectionId1 = _getCTCollectionId();
+
+		CTEntry ctEntry1 = _addJournalArticleCTEntry(
+			ctCollectionId1, journalArticle);
+
+		long ctCollectionId2 = _getCTCollectionId();
+
+		CTEntry ctEntry2 = _addJournalArticleCTEntry(
+			ctCollectionId2, journalArticle);
+
+		Page<CTEntry> page;
+
+		try (SafeCloseable safeCloseable =
+				CTCollectionThreadLocal.setCTCollectionIdWithSafeCloseable(
+					ctCollectionId1)) {
+
+			page = ctEntryResource.getCTEntriesHistoryPage(
+				_journalArticleClassNameId, ctEntry1.getModelClassPK(), null,
+				testGroup.getGroupId(), null, Pagination.of(1, 10), null);
+		}
+
+		assertContains(ctEntry1, (List<CTEntry>)page.getItems());
+		assertContains(ctEntry2, (List<CTEntry>)page.getItems());
+
+		Assert.assertEquals(2, page.getTotalCount());
+	}
+
 	@Override
 	@Test
 	public void testGetCTEntriesHistoryPageWithFilterDateTimeEquals()
