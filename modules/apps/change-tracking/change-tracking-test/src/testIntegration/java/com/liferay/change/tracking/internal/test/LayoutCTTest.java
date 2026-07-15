@@ -12,6 +12,7 @@ import com.liferay.asset.kernel.service.AssetEntryLocalService;
 import com.liferay.asset.kernel.service.AssetTagLocalService;
 import com.liferay.change.tracking.conflict.ConflictInfo;
 import com.liferay.change.tracking.constants.CTConstants;
+import com.liferay.change.tracking.exception.CTResourcePendingDeletionException;
 import com.liferay.change.tracking.internal.test.util.CTCollectionTestUtil;
 import com.liferay.change.tracking.model.CTCollection;
 import com.liferay.change.tracking.model.CTEntry;
@@ -286,6 +287,21 @@ public class LayoutCTTest {
 		finally {
 			_ctCollection = null;
 		}
+	}
+
+	@Test
+	public void testDeleteLayoutInProductionWithPublicationDeletionMarker()
+		throws Exception {
+
+		Layout layout = LayoutTestUtil.addTypePortletLayout(_group);
+
+		_ctEntryLocalService.addCTEntry(
+			null, _ctCollection.getCtCollectionId(), _layoutClassNameId, layout,
+			TestPropsValues.getUserId(), CTConstants.CT_CHANGE_TYPE_DELETION);
+
+		_layoutLocalService.deleteLayout(layout);
+
+		Assert.assertNull(_layoutLocalService.fetchLayout(layout.getPlid()));
 	}
 
 	@Test
@@ -1336,6 +1352,47 @@ public class LayoutCTTest {
 		}
 		finally {
 			CacheRegistryUtil.setActive(active);
+		}
+	}
+
+	@Test
+	public void testUpdateLayoutWithPendingDeletion() throws Exception {
+		Layout layout = LayoutTestUtil.addTypePortletLayout(_group);
+
+		try (SafeCloseable safeCloseable =
+				CTCollectionThreadLocal.setCTCollectionIdWithSafeCloseable(
+					_ctCollection.getCtCollectionId());
+			LogCapture logCapture = LoggerTestUtil.configureLog4JLogger(
+				BasePersistenceImpl.class.getName(), LoggerTestUtil.ERROR)) {
+
+			_ctEntryLocalService.addCTEntry(
+				null, _ctCollection.getCtCollectionId(), _layoutClassNameId,
+				layout, TestPropsValues.getUserId(),
+				CTConstants.CT_CHANGE_TYPE_DELETION);
+
+			layout.setTitle(RandomTestUtil.randomString());
+
+			try {
+				_layoutLocalService.updateLayout(layout);
+
+				Assert.fail();
+			}
+			catch (Exception exception) {
+				Assert.assertTrue(
+					exception.getCause() instanceof
+						CTResourcePendingDeletionException);
+			}
+
+			List<LogEntry> logEntries = logCapture.getLogEntries();
+
+			Assert.assertEquals(logEntries.toString(), 1, logEntries.size());
+
+			LogEntry logEntry = logEntries.get(0);
+
+			Assert.assertEquals(
+				"Caught unexpected exception " +
+					CTResourcePendingDeletionException.class.getName(),
+				logEntry.getMessage());
 		}
 	}
 
