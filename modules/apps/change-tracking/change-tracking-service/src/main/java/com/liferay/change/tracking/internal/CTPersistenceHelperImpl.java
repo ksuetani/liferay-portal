@@ -6,9 +6,11 @@
 package com.liferay.change.tracking.internal;
 
 import com.liferay.change.tracking.constants.CTConstants;
+import com.liferay.change.tracking.exception.CTResourcePendingDeletionException;
 import com.liferay.change.tracking.model.CTEntry;
 import com.liferay.change.tracking.service.CTEntryLocalService;
 import com.liferay.petra.lang.SafeCloseable;
+import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.change.tracking.CTCollectionThreadLocal;
 import com.liferay.portal.kernel.change.tracking.CTRequiredModelException;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -48,6 +50,16 @@ public class CTPersistenceHelperImpl implements CTPersistenceHelper {
 
 		CTEntry ctEntry = _ctEntryLocalService.fetchCTEntry(
 			ctCollectionId, modelClassNameId, modelClassPK);
+
+		if ((ctEntry != null) &&
+			(ctEntry.getChangeType() == CTConstants.CT_CHANGE_TYPE_DELETION)) {
+
+			throw new CTResourcePendingDeletionException(
+				StringBundler.concat(
+					"Model ", ctModel.getModelClassName(), " ", modelClassPK,
+					" cannot be modified because it is pending deletion in ",
+					"publication ", ctCollectionId));
+		}
 
 		long userId = PrincipalThreadLocal.getUserId();
 
@@ -127,10 +139,11 @@ public class CTPersistenceHelperImpl implements CTPersistenceHelper {
 					CTConstants.CT_CHANGE_TYPE_MODIFICATION)) {
 
 				throw new CTRequiredModelException(
-					String.format(
-						"Model %s %s cannot be deleted because it is being " +
-							"modified in one or more publications",
-						ctModel.getModelClassName(), modelClassPK));
+					StringBundler.concat(
+						"Model ", ctModel.getModelClassName(), " ",
+						modelClassPK,
+						" cannot be deleted because it is being modified in ",
+						"one or more publications"));
 			}
 
 			return true;
@@ -138,6 +151,16 @@ public class CTPersistenceHelperImpl implements CTPersistenceHelper {
 
 		CTEntry ctEntry = _ctEntryLocalService.fetchCTEntry(
 			ctCollectionId, modelClassNameId, modelClassPK);
+
+		if ((ctEntry != null) &&
+			(ctEntry.getChangeType() == CTConstants.CT_CHANGE_TYPE_DELETION)) {
+
+			throw new CTResourcePendingDeletionException(
+				StringBundler.concat(
+					"Model ", ctModel.getModelClassName(), " ", modelClassPK,
+					" cannot be deleted because it is pending deletion in ",
+					"publication ", ctCollectionId));
+		}
 
 		try {
 			if (ctEntry == null) {
