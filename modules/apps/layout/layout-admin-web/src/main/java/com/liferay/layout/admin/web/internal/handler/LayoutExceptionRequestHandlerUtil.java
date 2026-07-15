@@ -7,6 +7,7 @@ package com.liferay.layout.admin.web.internal.handler;
 
 import com.liferay.asset.kernel.exception.AssetCategoryException;
 import com.liferay.asset.kernel.model.AssetVocabulary;
+import com.liferay.change.tracking.exception.CTResourcePendingDeletionException;
 import com.liferay.friendly.url.exception.DuplicateFriendlyURLEntryException;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.change.tracking.CTRequiredModelException;
@@ -70,6 +71,26 @@ public class LayoutExceptionRequestHandlerUtil {
 					PortalUtil.getLocale(actionRequest),
 					"item-cannot-be-deleted-because-it-is-being-modified-in-" +
 						"one-or-more-publications"));
+
+			JSONPortletResponseUtil.writeJSON(
+				actionRequest, actionResponse, jsonObject);
+
+			return;
+		}
+		else if (exception.getCause() instanceof
+					CTResourcePendingDeletionException) {
+
+			SessionMessages.add(
+				actionRequest,
+				PortalUtil.getPortletId(actionRequest) +
+					SessionMessages.KEY_SUFFIX_HIDE_DEFAULT_SUCCESS_MESSAGE);
+
+			JSONObject jsonObject = JSONUtil.put(
+				"errorMessage",
+				LanguageUtil.get(
+					PortalUtil.getLocale(actionRequest),
+					"this-page-is-already-marked-for-deletion-in-this-" +
+						"publication"));
 
 			JSONPortletResponseUtil.writeJSON(
 				actionRequest, actionResponse, jsonObject);
