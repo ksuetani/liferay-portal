@@ -168,16 +168,13 @@ public class PageSpeedScanService {
 		_liferayService.patchSEOStudioScan(
 			null, seoStudioScanId, PageSpeedConstants.STATE_RUNNING);
 
-		long seoStudioScanRunId = scanJSONObject.getLong(
-			"r_seoStudioScanRunToSEOStudioScans_seoStudioScanRunId");
+		JSONObject scanRunJSONObject = scanJSONObject.getJSONObject(
+			"seoStudioScanRun");
 
-		JSONObject scanRunJSONObject = _liferayService.getScanRunJSONObject(
-			seoStudioScanRunId);
+		JSONObject domainJSONObject = scanRunJSONObject.getJSONObject(
+			"seoStudioDomain");
 
-		long domainId = scanRunJSONObject.getLong(
-			"r_seoStudioDomainToSEOStudioScanRuns_seoStudioDomainId");
-
-		Domain domain = _liferayService.getDomain(domainId);
+		Domain domain = new Domain(domainJSONObject);
 
 		String googlePageSpeedAPIKey = domain.getGooglePageSpeedAPIKey();
 
