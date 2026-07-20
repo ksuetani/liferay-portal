@@ -34,28 +34,27 @@ export default function propsTransformer({portletNamespace, ...otherProps}) {
 	};
 
 	const deleteSelectedPages = (itemData) => {
+		const url = new URL(itemData?.deleteLayoutURL);
+
+		const keys = getSelectedKeys(portletNamespace);
+
+		const deleteURL = addParams(
+			{
+				[`_${url.searchParams.get('p_p_id')}_rowIds`]: keys.join(','),
+			},
+			itemData?.deleteLayoutURL
+		);
+
 		openDeleteLayoutModal({
+			deleteURL,
 			message: Liferay.Language.get(
 				'are-you-sure-you-want-to-delete-the-selected-pages-if-the-selected-pages-have-child-pages-they-will-also-be-removed'
 			),
 			multiple: true,
 			onDelete: () => {
-				const keys = getSelectedKeys(portletNamespace);
-
-				const url = new URL(itemData?.deleteLayoutURL);
-
-				fetch(
-					addParams(
-						{
-							[`_${url.searchParams.get('p_p_id')}_rowIds`]:
-								keys.join(','),
-						},
-						itemData?.deleteLayoutURL
-					),
-					{
-						method: 'post',
-					}
-				)
+				return fetch(deleteURL, {
+					method: 'post',
+				})
 					.then((response) => response.json())
 					.then(({errorMessage, redirectURL}) => {
 						if (errorMessage) {

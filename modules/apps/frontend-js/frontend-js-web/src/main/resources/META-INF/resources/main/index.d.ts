@@ -861,6 +861,11 @@ export function setSessionValue(
 export function isReducedMotion(): boolean;
 
 export {default as deepClone} from '../liferay/util/deepClone';
+export {
+	clearDeleteLayoutInFlight,
+	isDeleteLayoutInFlight,
+	markDeleteLayoutInFlight,
+} from './util/deleteLayoutInFlight';
 export {default as formatStorage} from '../liferay/util/format_storage';
 
 /**

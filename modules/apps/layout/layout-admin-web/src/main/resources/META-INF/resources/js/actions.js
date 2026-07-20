@@ -39,8 +39,9 @@ const ACTIONS = {
 
 	deleteLayout: ({deleteLayoutURL, message}) => {
 		openDeleteLayoutModal({
+			deleteURL: deleteLayoutURL,
 			message,
-			onDelete: () => {
+			onDelete: () =>
 				fetch(deleteLayoutURL, {
 					method: 'post',
 				})
@@ -65,8 +66,7 @@ const ACTIONS = {
 							title: Liferay.Language.get('error'),
 							type: 'danger',
 						})
-					);
-			},
+					),
 		});
 	},
 

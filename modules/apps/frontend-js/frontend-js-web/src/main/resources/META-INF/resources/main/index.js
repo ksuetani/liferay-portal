@@ -90,6 +90,11 @@ export {
 export {default as AOP} from './aop/AOP.es';
 export {default as buildFragment} from './util/build_fragment';
 export {default as deepClone} from './util/deepClone';
+export {
+	clearDeleteLayoutInFlight,
+	isDeleteLayoutInFlight,
+	markDeleteLayoutInFlight,
+} from './util/deleteLayoutInFlight';
 export {default as printPage} from './util/print_page';
 export {default as dateUtils} from './utils/date_time/index';
 export {default as mimeTypeUtils} from './utils/mime_type/index';
