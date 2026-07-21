@@ -514,20 +514,28 @@ export class PagesAdminPage {
 		});
 	}
 
+	async confirmDeletePage() {
+		await this.page.getByRole('button', {name: 'Delete'}).click();
+	}
+
 	async deletePage(name: string) {
+		await this.openDeletePageModal(name);
+
+		await this.confirmDeletePage();
+
+		await waitForAlert(
+			this.page,
+			'Success:Your request completed successfully.'
+		);
+	}
+
+	async openDeletePageModal(name: string) {
 		await this.clickOnAction('Delete', name);
 
 		await this.page
 			.locator('.modal-title')
 			.getByText('Delete Page')
 			.waitFor();
-
-		await this.page.getByRole('button', {name: 'Delete'}).click();
-
-		await waitForAlert(
-			this.page,
-			'Success:Your request completed successfully.'
-		);
 	}
 
 	async editPage(name: string) {
