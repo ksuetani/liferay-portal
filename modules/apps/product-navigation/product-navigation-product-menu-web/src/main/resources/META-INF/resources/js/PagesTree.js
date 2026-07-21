@@ -9,7 +9,14 @@ import {ClayDropDownWithItems} from '@clayui/drop-down';
 import ClayIcon from '@clayui/icon';
 import ClayLabel from '@clayui/label';
 import {openModal, openToast} from 'frontend-js-components-web';
-import {fetch, navigate, sub} from 'frontend-js-web';
+import {
+	clearDeleteLayoutInFlight,
+	fetch,
+	isDeleteLayoutInFlight,
+	markDeleteLayoutInFlight,
+	navigate,
+	sub,
+} from 'frontend-js-web';
 import PropTypes from 'prop-types';
 import React, {useCallback, useEffect, useState} from 'react';
 
@@ -460,6 +467,19 @@ function normalizeActions(actions, namespace) {
 				nextItem.onClick = (event) => {
 					event.preventDefault();
 
+					const guarded = item.id === ACTION_DELETE;
+
+					if (guarded && isDeleteLayoutInFlight(item.data.url)) {
+						openToast({
+							message: Liferay.Language.get(
+								'this-page-is-currently-being-deleted'
+							),
+							type: 'danger',
+						});
+
+						return;
+					}
+
 					let modalData = {
 						id: `${namespace}pagesTreeModal`,
 						title: item.data.modalTitle,
@@ -483,9 +503,15 @@ function normalizeActions(actions, namespace) {
 									displayType: 'danger',
 									label: Liferay.Language.get('delete'),
 									onClick: ({processClose}) => {
+										if (guarded) {
+											markDeleteLayoutInFlight(
+												item.data.url
+											);
+										}
+
 										processClose();
 
-										fetch(item.data.url, {
+										const promise = fetch(item.data.url, {
 											method: 'post',
 										})
 											.then((response) => response.json())
@@ -516,6 +542,14 @@ function normalizeActions(actions, namespace) {
 												}
 											)
 											.catch(() => openErrorToast());
+
+										if (guarded) {
+											promise.finally(() => {
+												clearDeleteLayoutInFlight(
+													item.data.url
+												);
+											});
+										}
 									},
 								},
 							],
