@@ -6,7 +6,6 @@
 package com.liferay.change.tracking.internal.search.spi.model.index.contributor;
 
 import com.liferay.change.tracking.constants.CTConstants;
-import com.liferay.change.tracking.constants.CTDestinationNames;
 import com.liferay.change.tracking.model.CTCollection;
 import com.liferay.change.tracking.model.CTEntry;
 import com.liferay.change.tracking.service.CTCollectionLocalService;
@@ -16,8 +15,6 @@ import com.liferay.journal.model.JournalArticle;
 import com.liferay.journal.model.JournalArticleLocalization;
 import com.liferay.journal.service.JournalArticleLocalService;
 import com.liferay.petra.lang.SafeCloseable;
-import com.liferay.petra.string.StringBundler;
-import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.change.tracking.CTCollectionThreadLocal;
 import com.liferay.portal.kernel.change.tracking.sql.CTSQLModeThreadLocal;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -29,10 +26,6 @@ import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.GroupedModel;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.model.User;
-import com.liferay.portal.kernel.scheduler.SchedulerEngineHelper;
-import com.liferay.portal.kernel.scheduler.SchedulerException;
-import com.liferay.portal.kernel.scheduler.StorageType;
-import com.liferay.portal.kernel.scheduler.messaging.SchedulerResponse;
 import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.service.GroupLocalService;
@@ -44,7 +37,6 @@ import com.liferay.portal.kernel.util.Localization;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.search.spi.model.index.contributor.ModelDocumentContributor;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -92,14 +84,15 @@ public class CTEntryModelDocumentContributor
 					WorkflowConstants.getStatusLabel(ctCollection.getStatus())),
 				true, true);
 
-			if ((ctCollection.getStatus() ==
-					WorkflowConstants.STATUS_APPROVED) ||
-				(ctCollection.getStatus() ==
-					WorkflowConstants.STATUS_SCHEDULED)) {
+			int ctCollectionStatus = ctCollection.getStatus();
 
+			if (ctCollectionStatus == WorkflowConstants.STATUS_APPROVED) {
 				document.addDateSortable(
-					"ctCollectionStatusDate",
-					_getCTCollectionStatusDate(ctCollection));
+					"ctCollectionStatusDate", ctCollection.getStatusDate());
+			}
+
+			if ((ctCollectionStatus == WorkflowConstants.STATUS_APPROVED) ||
+				(ctCollectionStatus == WorkflowConstants.STATUS_SCHEDULED)) {
 
 				User ctCollectionStatusUser = _userLocalService.fetchUser(
 					ctCollection.getStatusByUserId());
@@ -151,33 +144,6 @@ public class CTEntryModelDocumentContributor
 		}
 
 		return map;
-	}
-
-	private Date _getCTCollectionStatusDate(CTCollection ctCollection) {
-		if (ctCollection.getStatus() == WorkflowConstants.STATUS_APPROVED) {
-			return ctCollection.getStatusDate();
-		}
-
-		try {
-			SchedulerResponse schedulerResponse =
-				_schedulerEngineHelper.getScheduledJob(
-					StringBundler.concat(
-						ctCollection.getCtCollectionId(), StringPool.AT,
-						ctCollection.getCompanyId()),
-					CTDestinationNames.CT_COLLECTION_SCHEDULED_PUBLISH,
-					StorageType.PERSISTED);
-
-			if (schedulerResponse != null) {
-				return _schedulerEngineHelper.getStartDate(schedulerResponse);
-			}
-		}
-		catch (SchedulerException schedulerException) {
-			if (_log.isWarnEnabled()) {
-				_log.warn(schedulerException);
-			}
-		}
-
-		return null;
 	}
 
 	private <T extends BaseModel<T>> Group _getGroup(
@@ -395,9 +361,6 @@ public class CTEntryModelDocumentContributor
 
 	@Reference
 	private Localization _localization;
-
-	@Reference
-	private SchedulerEngineHelper _schedulerEngineHelper;
 
 	@Reference
 	private UserLocalService _userLocalService;
