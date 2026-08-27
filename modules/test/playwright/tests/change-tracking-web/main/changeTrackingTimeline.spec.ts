@@ -354,8 +354,6 @@ test('LPD-25853 Move Change is added in the timeline dropdown actions', async ({
 		trigger: timelineActionsButton,
 	});
 
-	await moveButton.click();
-
 	const moveChangesHeader = page
 		.getByTestId('headerTitle')
 		.filter({hasText: 'Move Changes'});
