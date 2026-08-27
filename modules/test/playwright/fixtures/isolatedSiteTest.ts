@@ -36,6 +36,10 @@ const isolatedSiteTest = test.extend<{
 			}
 			finally {
 				if (site?.externalReferenceCode) {
+					await apiHelpers.headlessChangeTracking.checkoutCTCollection(
+						0
+					);
+
 					await apiHelpers.headlessAdminSite.deleteSite(
 						site.externalReferenceCode
 					);
